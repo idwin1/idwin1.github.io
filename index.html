@@ -1,0 +1,82 @@
+<html>
+<head>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="raphael-2.1.4.min.js"></script>
+<script src="justgage.js"></script>
+
+<script>
+var accessToken = "3542fde61bfd9e62788aeeb707f1402639eba13b";
+var deviceID = "0a10aced202194944a05a70c";
+var urlC = "https://api.particle.io/v1/devices/" + deviceID + "/gradosC";
+var urlF = "https://api.particle.io/v1/devices/" + deviceID + "/gradosF";
+	
+	function callbackC(data, status){
+	if (status == "success") {
+		var tempC = parseFloat(data.result);
+		tempC = tempC.toFixed(2);
+		gC.refresh(tempC);
+		
+		if (tempC >= 0 && tempC < 20) {
+			document.getElementById("fondo").style.backgroundColor = "#87CEEB";
+		} else if (tempC >= 20 && tempC < 30) {
+			document.getElementById("fondo").style.backgroundColor = "#FF8000";
+		} else if (tempC >= 40) {
+			document.getElementById("fondo").style.backgroundColor = "#FF0000";
+		}
+		
+		setTimeout(getReadingC, 1000);
+	} else {
+		alert("There was a problem with Celsius data");
+	}
+}
+
+
+function callbackF(data, status){
+	if (status == "success") {
+		var tempF = parseFloat(data.result);
+		tempF = tempF.toFixed(2);
+		gF.refresh(tempF);
+		setTimeout(getReadingF, 1000);
+	} else {
+		alert("There was a problem with Fahrenheit data");
+	}
+}
+
+function getReadingC(){
+   	$.get(urlC, {access_token: accessToken}, callbackC);
+}
+
+function getReadingF(){
+   	$.get(urlF, {access_token: accessToken}, callbackF);
+}
+</script>
+</head>	
+
+<body background="" id="fondo">
+	<div style="display: flex; justify-content: center; gap: 20px; align-items: center;">
+		<div id="gaugeC" style="width: 400px; height: 400px;"></div>
+		<div id="gaugeF" style="width: 400px; height: 400px;"></div>
+	</div>
+<script>
+var gC = new JustGage({
+    id: "gaugeC",
+    value: 0,
+    min: 0,
+    max: 400,
+    title: "Temperatura (C)"
+});
+
+var gF = new JustGage({
+    id: "gaugeF",
+    value: 0,
+    min: 0,
+    max: 400,
+    title: "Temperatura (F)"
+});
+
+getReadingC();
+getReadingF();
+</script>
+
+</body>
+</html>
