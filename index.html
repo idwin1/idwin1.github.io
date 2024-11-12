@@ -50,9 +50,58 @@ function getReadingF(){
    	$.get(urlF, {access_token: accessToken}, callbackF);
 }
 </script>
+<script>
+        function controlLED(action) {
+            const url = 'https://api.particle.io/v1/devices/0a10aced202194944a05a70c/led';
+            const accessToken = '3542fde61bfd9e62788aeeb707f1402639eba13b';
+            const alertDiv = document.getElementById('alert');
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: access_token=${accessToken}&params=${action}
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.return_value === 1 ) {
+                        alertDiv.className = 'alert success';
+                        alertDiv.innerText = 'LED encendido correctamente.';
+                    } else if (data.return_value === 0 ) {
+                        alertDiv.className = 'alert success';
+                        alertDiv.innerText = 'LED apagado correctamente.';
+                    } else if (data.return_value === -1) {
+                        alertDiv.className = 'alert error';
+                        alertDiv.innerText = No se pudo ${action === 'on' ? 'encender' : 'apagar'} el LED.;
+                    } else {
+                        alertDiv.className = 'alert error';
+                        alertDiv.innerText = 'Error inesperado al controlar el LED.';
+                    }
+                    alertDiv.style.display = 'block';
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alertDiv.className = 'alert error';
+                    alertDiv.innerText = 'Ocurrió un error al intentar controlar el LED.';
+                    alertDiv.style.display = 'block';
+                });
+        }
+    </script>
 </head>	
 
 <body background="" id="fondo">
+	<div class="container">
+        <div class="title">Control desde la Web</div>
+
+        <div class="button-container">
+            <button onclick="controlLED('on')">Encender LED</button>
+            <button onclick="controlLED('off')">Apagar LED</button>
+        </div>
+
+        <div id="alert" class="alert"></div>
+    </div>
+
 	<div style="display: grid;justify-content: center; gap: 20px; align-items: center;">
 		<div id="gaugeC" style="width: 400px; height: 400px;"></div>
 		<div id="gaugeF" style="width: 400px; height: 400px;"></div>
