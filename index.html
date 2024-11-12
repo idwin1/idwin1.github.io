@@ -1,57 +1,65 @@
-<html>
+<!DOCTYPE html>
+<html lang="es">
 <head>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript" charset="utf-8"></script>
-<script src="raphael-2.1.4.min.js"></script>
-<script src="justgage.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control de LED y Temperatura</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" charset="utf-8"></script>
+    <script src="raphael-2.1.4.min.js"></script>
+    <script src="justgage.js"></script>
+    <style>
+        .container { text-align: center; margin: 20px; }
+        .title { font-size: 24px; margin-bottom: 10px; }
+        .button-container { margin: 10px; }
+        .alert { display: none; padding: 10px; margin-top: 10px; }
+        .alert.success { color: green; }
+        .alert.error { color: red; }
+    </style>
+    <script>
+        var accessToken = "3542fde61bfd9e62788aeeb707f1402639eba13b";
+        var deviceID = "0a10aced202194944a05a70c";
+        var urlC = "https://api.particle.io/v1/devices/" + deviceID + "/gradosC";
+        var urlF = "https://api.particle.io/v1/devices/" + deviceID + "/gradosF";
 
-<script>
-var accessToken = "3542fde61bfd9e62788aeeb707f1402639eba13b";
-var deviceID = "0a10aced202194944a05a70c";
-var urlC = "https://api.particle.io/v1/devices/" + deviceID + "/gradosC";
-var urlF = "https://api.particle.io/v1/devices/" + deviceID + "/gradosF";
-	
-	function callbackC(data, status){
-	if (status == "success") {
-		var tempC = parseFloat(data.result);
-		tempC = tempC.toFixed(2);
-		gC.refresh(tempC);
-		
-		if (tempC >= 0 && tempC < 20) {
-			document.getElementById("fondo").style.backgroundColor = "#87CEEB";
-		} else if (tempC >= 20 && tempC < 30) {
-			document.getElementById("fondo").style.backgroundColor = "#FF8000";
-		} else if (tempC >= 40) {
-			document.getElementById("fondo").style.backgroundColor = "#FF0000";
-		}
-		
-		setTimeout(getReadingC, 1000);
-	} else {
-		alert("There was a problem with Celsius data");
-	}
-}
+        function callbackC(data, status) {
+            if (status === "success") {
+                var tempC = parseFloat(data.result).toFixed(2);
+                gC.refresh(tempC);
 
+                if (tempC >= 0 && tempC < 20) {
+                    document.getElementById("fondo").style.backgroundColor = "#87CEEB";
+                } else if (tempC >= 20 && tempC < 30) {
+                    document.getElementById("fondo").style.backgroundColor = "#FF8000";
+                } else if (tempC >= 40) {
+                    document.getElementById("fondo").style.backgroundColor = "#FF0000";
+                }
 
-function callbackF(data, status){
-	if (status == "success") {
-		var tempF = parseFloat(data.result);
-		tempF = tempF.toFixed(2);
-		gF.refresh(tempF);
-		setTimeout(getReadingF, 1000);
-	} else {
-		alert("There was a problem with Fahrenheit data");
-	}
-}
+                setTimeout(getReadingC, 1000);
+            } else {
+                alert("Hubo un problema con los datos en Celsius");
+            }
+        }
 
-function getReadingC(){
-   	$.get(urlC, {access_token: accessToken}, callbackC);
-}
+        function callbackF(data, status) {
+            if (status === "success") {
+                var tempF = parseFloat(data.result).toFixed(2);
+                gF.refresh(tempF);
+                setTimeout(getReadingF, 1000);
+            } else {
+                alert("Hubo un problema con los datos en Fahrenheit");
+            }
+        }
 
-function getReadingF(){
-   	$.get(urlF, {access_token: accessToken}, callbackF);
-}
+        function getReadingC() {
+            $.get(urlC, { access_token: accessToken }, callbackC);
+        }
+
+        function getReadingF() {
+            $.get(urlF, { access_token: accessToken }, callbackF);
+        }
+
         function controlLED(action) {
             const url = 'https://api.particle.io/v1/devices/0a10aced202194944a05a70c/led';
-            const accessToken = '3542fde61bfd9e62788aeeb707f1402639eba13b';
             const alertDiv = document.getElementById('alert');
 
             fetch(url, {
@@ -59,72 +67,64 @@ function getReadingF(){
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
                 },
-                body: access_token=${accessToken}&params=${action}
+                body: `access_token=${accessToken}&params=${action}`
             })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.return_value === 1 ) {
-                        alertDiv.className = 'alert success';
-                        alertDiv.innerText = 'LED encendido correctamente.';
-                    } else if (data.return_value === 0 ) {
-                        alertDiv.className = 'alert success';
-                        alertDiv.innerText = 'LED apagado correctamente.';
-                    } else if (data.return_value === -1) {
-                        alertDiv.className = 'alert error';
-                        alertDiv.innerText = No se pudo ${action === 'on' ? 'encender' : 'apagar'} el LED.;
-                    } else {
-                        alertDiv.className = 'alert error';
-                        alertDiv.innerText = 'Error inesperado al controlar el LED.';
-                    }
-                    alertDiv.style.display = 'block';
-                })
-                .catch(error => {
-                    console.error('Error:', error);
+            .then(response => response.json())
+            .then(data => {
+                if (data.return_value === 1) {
+                    alertDiv.className = 'alert success';
+                    alertDiv.innerText = 'LED encendido correctamente.';
+                } else if (data.return_value === 0) {
+                    alertDiv.className = 'alert success';
+                    alertDiv.innerText = 'LED apagado correctamente.';
+                } else {
                     alertDiv.className = 'alert error';
-                    alertDiv.innerText = 'Ocurrió un error al intentar controlar el LED.';
-                    alertDiv.style.display = 'block';
-                });
+                    alertDiv.innerText = `No se pudo ${action === 'on' ? 'encender' : 'apagar'} el LED.`;
+                }
+                alertDiv.style.display = 'block';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alertDiv.className = 'alert error';
+                alertDiv.innerText = 'Ocurrió un error al intentar controlar el LED.';
+                alertDiv.style.display = 'block';
+            });
         }
-</script>
-</head>	
 
-<body background="" id="fondo">
-	<div class="container">
+        document.addEventListener('DOMContentLoaded', () => {
+            gC = new JustGage({
+                id: "gaugeC",
+                value: 0,
+                min: 0,
+                max: 100,
+                title: "Temperatura (°C)"
+            });
+
+            gF = new JustGage({
+                id: "gaugeF",
+                value: 0,
+                min: 0,
+                max: 212,
+                title: "Temperatura (°F)"
+            });
+
+            getReadingC();
+            getReadingF();
+        });
+    </script>
+</head>
+<body id="fondo">
+    <div class="container">
         <div class="title">Control desde la Web</div>
-
         <div class="button-container">
             <button onclick="controlLED('on')">Encender LED</button>
             <button onclick="controlLED('off')">Apagar LED</button>
         </div>
-
         <div id="alert" class="alert"></div>
     </div>
-
-	<div style="display: grid;justify-content: center; gap: 20px; align-items: center;">
-		<div id="gaugeC" style="width: 400px; height: 400px;"></div>
-		<div id="gaugeF" style="width: 400px; height: 400px;"></div>
-	</div>
-	
-<script>
-var gC = new JustGage({
-    id: "gaugeC",
-    value: 0,
-    min: 0,
-    max: 400,
-    title: "Temperatura (C)"
-});
-
-var gF = new JustGage({
-    id: "gaugeF",
-    value: 0,
-    min: 0,
-    max: 400,
-    title: "Temperatura (F)"
-});
-
-getReadingC();
-getReadingF();
-</script>
-
+    <div style="display: grid; justify-content: center; gap: 20px; align-items: center;">
+        <div id="gaugeC" style="width: 400px; height: 400px;"></div>
+        <div id="gaugeF" style="width: 400px; height: 400px;"></div>
+    </div>
 </body>
 </html>
