@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alimentar Pez</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #0683f1;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px 30px;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>Control de Alimentación</h1>
+    <p>Presiona el botón para alimentar al pez.</p>
+    <button id="feedFishButton">Alimentar Pez</button>
+    <p id="responseMessage"></p>
+
+    <script>
+        const accessToken = "3542fde61bfd9e62788aeeb707f1402639eba13b"; // Reemplaza con tu token de acceso
+        const deviceId = "0a10aced202194944a05a70c"; // Reemplaza con el ID de tu dispositivo
+        const functionName = "alimentarPez"; // Nombre de tu función en el Particle
+
+        document.getElementById('feedFishButton').addEventListener('click', () => {
+            const url = `https://api.particle.io/v1/devices/${deviceId}/${functionName}`;
+            const data = {
+                arg: "alimentar", // Argumento que envías a la función (opcional)
+            };
+
+            fetch(url, {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${accessToken}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                console.log(result);
+                document.getElementById('responseMessage').innerText = 
+                    result.return_value === 1 
+                    ? "¡El pez ha sido alimentado!" 
+                    : "Hubo un problema al alimentar al pez.";
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                document.getElementById('responseMessage').innerText = 
+                    "No se pudo conectar con el dispositivo.";
+            });
+        });
+    </script>
+</body>
+</html>
