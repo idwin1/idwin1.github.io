@@ -3,15 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alimentar Pez</title>
+    <title>Control de Fecha y Alimentación</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             text-align: center;
             background-color: #0683f1;
+            background-image:url('https://wallpapers.com/images/hd/aquarium-background-4guswk6qha7orplb.jpg');
             color: #333;
             margin: 0;
             padding: 20px;
+        }
+        form, .button-container {
+            display: inline-block;
+            text-align: left;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin: 20px;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+        input {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
         }
         button {
             background-color: #4CAF50;
@@ -21,29 +43,132 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            margin-top: 20px;
         }
         button:hover {
             background-color: #45a049;
         }
+        #responseMessage {
+            margin-top: 20px;
+        }
+         /* Contenedor de burbujas */
+         .bubble-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        /* Estilo de las burbujas */
+        .bubble {
+            position: absolute;
+            bottom: -100px; /* Empieza fuera de la pantalla */
+            background-color: rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+            animation: floatUp 8s linear infinite;
+        }
+
+        /* Animación de las burbujas */
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-120vh) scale(0.8);
+                opacity: 0;
+            }
+        }
     </style>
 </head>
 <body>
-    <h1>Control de Alimentación</h1>
-    <p>Presiona el botón para alimentar al pez.</p>
-    <button id="feedFishButton">Alimentar Pez</button>
+    <div class="bubble-container" id="bubbleContainer">
+    <h1>Control de Fecha y Alimentación</h1>
+    <!-- Formulario para la fecha y hora -->
+    <form id="dateTimeForm">
+        <label for="year">Año:</label>
+        <input type="number" id="year" placeholder="Ejemplo: 2024" required>
+        <label for="month">Mes:</label>
+        <input type="number" id="month" placeholder="Ejemplo: 11" required>
+        <label for="day">Día:</label>
+        <input type="number" id="day" placeholder="Ejemplo: 26" required>
+        <label for="hour">Hora:</label>
+        <input type="number" id="hour" placeholder="Ejemplo: 14" required>
+        <label for="minute">Minuto:</label>
+        <input type="number" id="minute" placeholder="Ejemplo: 30" required>
+        <button type="submit">Enviar Fecha y Hora</button>
+    </form>
+    
+    <!-- Botón para alimentar al pez -->
+    <div class="button-container">
+        <button id="feedFishButton">Alimentar Pez</button>
+    </div>
+    
+    <!-- Mensaje de respuesta -->
     <p id="responseMessage"></p>
-
+    </div>
     <script>
         const accessToken = "3542fde61bfd9e62788aeeb707f1402639eba13b"; // Reemplaza con tu token de acceso
         const deviceId = "0a10aced202194944a05a70c"; // Reemplaza con el ID de tu dispositivo
-        const functionName = "alimentarPez"; // Nombre de tu función en el Particle
+        const functions = {
+            year: "setYear",    // Nombre de la función para el año
+            month: "setMonth",  // Nombre de la función para el mes
+            day: "setDay",      // Nombre de la función para el día
+            hour: "setHour",    // Nombre de la función para la hora
+            minute: "setMinute" // Nombre de la función para los minutos
+        };
+        const feedFunctionName = "alimentarPez"; // Función para alimentar al pez
 
-        document.getElementById('feedFishButton').addEventListener('click', () => {
-            const url = `https://api.particle.io/v1/devices/${deviceId}/${functionName}`;
+        // Enviar la fecha y hora al dispositivo Particle
+        document.getElementById('dateTimeForm').addEventListener('submit', (event) => {
+            event.preventDefault();
+
             const data = {
-                arg: "alimentar", // Argumento que envías a la función (opcional)
+                year: document.getElementById('year').value,
+                month: document.getElementById('month').value,
+                day: document.getElementById('day').value,
+                hour: document.getElementById('hour').value,
+                minute: document.getElementById('minute').value
             };
+
+            let promises = [];
+
+            for (let [key, value] of Object.entries(data)) {
+                const functionName = functions[key];
+                const url = `https://api.particle.io/v1/devices/${deviceId}/${functionName}`;
+                const payload = { arg: value.toString() };
+
+                promises.push(
+                    fetch(url, {
+                        method: "POST",
+                        headers: {
+                            "Authorization": `Bearer ${accessToken}`,
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify(payload)
+                    })
+                );
+            }
+
+            Promise.all(promises)
+                .then(responses => Promise.all(responses.map(res => res.json())))
+                .then(results => {
+                    console.log(results);
+                    document.getElementById('responseMessage').innerText = 
+                        results.every(result => result.return_value === 1)
+                        ? "¡Fecha y hora enviada correctamente!"
+                        : "Hubo un problema al enviar la fecha y hora.";
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    document.getElementById('responseMessage').innerText = 
+                        "No se pudo conectar con el dispositivo.";
+                });
+        });
+
+        // Alimentar al pez
+        document.getElementById('feedFishButton').addEventListener('click', () => {
+            const url = `https://api.particle.io/v1/devices/${deviceId}/${feedFunctionName}`;
+            const data = { arg: "alimentar" }; // Argumento para alimentar al pez (puedes cambiarlo si necesitas)
 
             fetch(url, {
                 method: "POST",
@@ -67,6 +192,38 @@
                     "No se pudo conectar con el dispositivo.";
             });
         });
+    </script>
+    <script>
+        const bubbleContainer = document.getElementById('bubbleContainer');
+
+        // Crear múltiples burbujas
+        function createBubble() {
+            const bubble = document.createElement('div');
+            bubble.classList.add('bubble');
+
+            // Tamaño aleatorio de la burbuja
+            const size = Math.random() * 50 + 10; // Entre 10px y 60px
+            bubble.style.width = `${size}px`;
+            bubble.style.height = `${size}px`;
+
+            // Posición horizontal aleatoria
+            bubble.style.left = `${Math.random() * 100}vw`;
+
+            // Duración y retraso aleatorios para la animación
+            bubble.style.animationDuration = `${Math.random() * 5 + 5}s`;
+            bubble.style.animationDelay = `${Math.random() * 3}s`;
+
+            // Agregar la burbuja al contenedor
+            bubbleContainer.appendChild(bubble);
+
+            // Eliminar la burbuja una vez terminada la animación
+            bubble.addEventListener('animationend', () => {
+                bubbleContainer.removeChild(bubble);
+            });
+        }
+
+        // Crear burbujas periódicamente
+        setInterval(createBubble, 500); // Cada 500ms
     </script>
 </body>
 </html>
