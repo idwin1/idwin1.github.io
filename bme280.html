@@ -1,0 +1,125 @@
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="raphael-2.1.4.min.js"></script>
+<script src="justgage.js"></script>
+
+<script>
+var accessToken = "3542fde61bfd9e62788aeeb707f1402639eba13b";
+var deviceID = "0a10aced202194944a05a70c";
+var urlTemp = "https://api.particle.io/v1/devices/" + deviceID + "/Temperatura";
+var urlPres = "https://api.particle.io/v1/devices/" + deviceID + "/Presion";
+var urlAlt = "https://api.particle.io/v1/devices/" + deviceID + "/Altitud";
+var urlHum = "https://api.particle.io/v1/devices/" + deviceID + "/Humedad";
+
+function callbackTemp(data, status){
+    if (status == "success") {
+        var temp = parseFloat(data.result);
+        temp = temp.toFixed(2);
+        gTemp.refresh(temp);
+        setTimeout(getReadingTemp, 1000);
+    } else {
+        alert("There was a problem with Temperature data");
+    }
+}
+
+function callbackPres(data, status){
+    if (status == "success") {
+        var pres = parseFloat(data.result);
+        pres = pres.toFixed(2);
+        gPres.refresh(pres);
+        setTimeout(getReadingPres, 1000);
+    } else {
+        alert("There was a problem with Pressure data");
+    }
+}
+
+function callbackAlt(data, status){
+    if (status == "success") {
+        var alt = parseFloat(data.result);
+        alt = alt.toFixed(2);
+        gAlt.refresh(alt);
+        setTimeout(getReadingAlt, 10000);
+    } else {
+        alert("There was a problem with Altitude data");
+    }
+}
+
+function callbackHum(data, status){
+    if (status == "success") {
+        var hum = parseFloat(data.result);
+        hum = hum.toFixed(2);
+        gHum.refresh(hum);
+        setTimeout(getReadingHum, 100);
+    } else {
+        alert("There was a problem with Humidity data");
+    }
+}
+
+function getReadingTemp(){
+    $.get(urlTemp, {access_token: accessToken}, callbackTemp);
+}
+
+function getReadingPres(){
+    $.get(urlPres, {access_token: accessToken}, callbackPres);
+}
+
+function getReadingAlt(){
+    $.get(urlAlt, {access_token: accessToken}, callbackAlt);
+}
+
+function getReadingHum(){
+    $.get(urlHum, {access_token: accessToken}, callbackHum);
+}
+</script>
+</head>	
+
+<body background="" id="fondo">
+    <div style="display: grid; justify-content: center; gap: 20px; align-items: center;">
+        <div id="gaugeTemp" style="width: 400px; height: 400px;"></div>
+        <div id="gaugePres" style="width: 400px; height: 400px;"></div>
+        <div id="gaugeAlt" style="width: 400px; height: 400px;"></div>
+        <div id="gaugeHum" style="width: 400px; height: 400px;"></div>
+    </div>
+
+<script>
+var gTemp = new JustGage({
+    id: "gaugeTemp",
+    value: 0,
+    min: 0,
+    max: 100,
+    title: "Temperatura (°C)"
+});
+
+var gPres = new JustGage({
+    id: "gaugePres",
+    value: 0,
+    min: 0,
+    max: 1100,
+    title: "Presión (hPa)"
+});
+
+var gAlt = new JustGage({
+    id: "gaugeAlt",
+    value: 0,
+    min: 0,
+    max: 10000,
+    title: "Altura (m)"
+});
+
+var gHum = new JustGage({
+    id: "gaugeHum",
+    value: 0,
+    min: 0,
+    max: 100,
+    title: "Humedad (%)"
+});
+
+getReadingTemp();
+getReadingPres();
+getReadingAlt();
+getReadingHum();
+</script>
+
+</body>
+</html>
