@@ -39,7 +39,7 @@ function callbackAlt(data, status){
         var alt = parseFloat(data.result);
         alt = alt.toFixed(2);
         gAlt.refresh(alt);
-        setTimeout(getReadingAlt, 10000);
+        setTimeout(getReadingAlt, 1000);
     } else {
         alert("There was a problem with Altitude data");
     }
@@ -50,7 +50,7 @@ function callbackHum(data, status){
         var hum = parseFloat(data.result);
         hum = hum.toFixed(2);
         gHum.refresh(hum);
-        setTimeout(getReadingHum, 100);
+        setTimeout(getReadingHum, 1000);
     } else {
         alert("There was a problem with Humidity data");
     }
@@ -72,14 +72,39 @@ function getReadingHum(){
     $.get(urlHum, {access_token: accessToken}, callbackHum);
 }
 </script>
+
+<style>
+    body {
+        background: #f5f5f5;
+        font-family: Arial, sans-serif;
+    }
+
+    .gauge-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 20px;
+        margin-top: 50px;
+    }
+
+    .gauge {
+        width: 300px;
+        height: 300px;
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 10px;
+    }
+</style>
 </head>	
 
-<body background="" id="fondo">
-    <div style="display: grid; justify-content: center; gap: 20px; align-items: center;">
-        <div id="gaugeTemp" style="width: 400px; height: 400px;"></div>
-        <div id="gaugePres" style="width: 400px; height: 400px;"></div>
-        <div id="gaugeAlt" style="width: 400px; height: 400px;"></div>
-        <div id="gaugeHum" style="width: 400px; height: 400px;"></div>
+<body id="fondo">
+    <div class="gauge-container">
+        <div id="gaugeTemp" class="gauge"></div>
+        <div id="gaugePres" class="gauge"></div>
+        <div id="gaugeAlt" class="gauge"></div>
+        <div id="gaugeHum" class="gauge"></div>
     </div>
 
 <script>
