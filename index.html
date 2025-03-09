@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario Local</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        form, .data-section {
+            margin-bottom: 20px;
+            padding: 20px;
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f9;
+        }
+    </style>
+</head>
+<body>
+    <h1>Formulario de Pacientes</h1>
+    <form id="dataForm">
+        <label for="name">Nombre:</label>
+        <input type="text" id="name" required>
+
+        <label for="age">Edad:</label>
+        <input type="number" id="age" min="0" required>
+
+        <label for="diagnosis">Diagnóstico:</label>
+        <input type="text" id="diagnosis" required>
+
+        <label for="sex">Sexo:</label>
+        <select id="sex" required>
+            <option value="Masculino">Masculino</option>
+            <option value="Femenino">Femenino</option>
+        </select>
+
+        <label for="supports">Apoyos:</label>
+        <input type="text" id="supports">
+
+        <label for="medications">Medicamentos:</label>
+        <input type="text" id="medications">
+
+        <label for="health">Estado de salud:</label>
+        <input type="text" id="health">
+
+        <label for="hospital">Hospital:</label>
+        <input type="text" id="hospital">
+
+        <label for="doctor">Médico:</label>
+        <input type="text" id="doctor">
+
+        <label for="year_diagnosis">Año de diagnóstico:</label>
+        <input type="number" id="year_diagnosis" min="1900">
+
+        <label for="admission_age">Edad de ingreso:</label>
+        <input type="number" id="admission_age" min="0">
+
+        <label for="birthdate">Fecha de nacimiento:</label>
+        <input type="date" id="birthdate" required>
+
+        <label for="mother">Nombre de madre:</label>
+        <input type="text" id="mother">
+
+        <label for="father">Nombre de padre:</label>
+        <input type="text" id="father">
+
+        <label for="address">Dirección:</label>
+        <input type="text" id="address">
+
+        <label for="phone">Teléfono:</label>
+        <input type="tel" id="phone">
+
+        <label for="time">Hora de descarga automática:</label>
+        <input type="time" id="time" required>
+
+        <button type="submit">Guardar</button>
+    </form>
+    
+
+    <div class="data-section">
+        <h2>Datos Guardados</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Edad</th>
+                    <th>Diagnóstico</th>
+                    <th>Sexo</th>
+                    <th>Teléfono</th>
+                    <th>Apoyos</th>
+                    <th>Medicamentos</th>
+                    <th>Hospital</th>
+                    <th>Estado de salud</th>
+                    <th>Medico</th>
+                    <th>año de ingreso</th>
+                    <th>Edad de admision</th>
+                    <th>Fecha de nacimiento</th>
+                    <th>Nombre de madre</th>
+                    <th>Nombre de padre</th>
+                    <th>Direccion</th>
+                    <th>Acción</th>
+                </tr>
+            </thead>
+            <tbody id="dataTable"></tbody>
+        </table>
+    </div>
+
+    <button id="download">Descargar Datos</button>
+
+    <button id="upload">Cargar Datos</button>
+    <input type="file" id="fileInput" style="display: none;">
+
+    <script src="script.js"></script>
+</body>
+</html>
