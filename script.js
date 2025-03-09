@@ -83,7 +83,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const scheduledTime = localStorage.getItem("scheduledTime");
         if (!scheduledTime) return;
 
-        const [hour, minute] = scheduledTime.split(":".map(Number));
+        const [hour, minute] = scheduledTime.split(":").map(Number);
         const now = new Date();
         const downloadTime = new Date();
         downloadTime.setHours(hour, minute, 0, 0);
@@ -101,10 +101,20 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     const timeInput = document.getElementById("time");
-    timeInput.addEventListener("change", () => {
-        localStorage.setItem("scheduledTime", timeInput.value);
-        scheduleDownload();
-        alert(`Descarga automática programada a las ${timeInput.value}`);
+    const scheduleButton = document.createElement("button");
+    scheduleButton.textContent = "Programar Descarga";
+    scheduleButton.style.marginTop = "10px";
+    timeInput.insertAdjacentElement("afterend", scheduleButton);
+
+    scheduleButton.addEventListener("click", () => {
+        const selectedTime = timeInput.value;
+        if (selectedTime) {
+            localStorage.setItem("scheduledTime", selectedTime);
+            scheduleDownload();
+            alert(`Descarga automática programada a las ${selectedTime}`);
+        } else {
+            alert("Por favor, selecciona una hora válida.");
+        }
     });
 
     form.addEventListener("submit", (e) => {
