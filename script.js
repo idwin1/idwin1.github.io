@@ -3,6 +3,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const downloadButton = document.getElementById("download");
     const uploadButton = document.getElementById("upload");
     const fileInput = document.getElementById("fileInput");
+    const detailsSection = document.getElementById("detailsSection");
+
+    let editIndex = null;
 
     const loadData = () => {
         const data = JSON.parse(localStorage.getItem("formData")) || [];
@@ -10,6 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
         dataTable.innerHTML = "";
         data.forEach((entry, index) => {
             const row = document.createElement("tr");
+            row.addEventListener("click", () => showDetails(index));
             row.innerHTML = `
                 <td>${entry.name}</td>
                 <td>${entry.age}</td>
@@ -27,7 +31,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 <td>${entry.mother}</td>
                 <td>${entry.father}</td>
                 <td>${entry.address}</td>
-                <td><button onclick="deleteEntry(${index})">Eliminar</button></td>
+                <td>
+                    <button onclick="deleteEntry(${index})">Eliminar</button>
+                    <button onclick="editEntry(${index})">Modificar</button>
+                </td>
             `;
             dataTable.appendChild(row);
         });
@@ -40,11 +47,39 @@ document.addEventListener("DOMContentLoaded", () => {
         loadData();
     };
 
+    window.editEntry = (index) => {
+        const data = JSON.parse(localStorage.getItem("formData")) || [];
+        const entry = data[index];
+        editIndex = index;
+
+        document.getElementById("name").value = entry.name;
+        document.getElementById("age").value = entry.age;
+        document.getElementById("diagnosis").value = entry.diagnosis;
+        document.getElementById("sex").value = entry.sex;
+        document.getElementById("phone").value = entry.phone;
+        document.getElementById("supports").value = entry.supports;
+        document.getElementById("medications").value = entry.medications;
+        document.getElementById("hospital").value = entry.hospital;
+        document.getElementById("health").value = entry.health;
+        document.getElementById("doctor").value = entry.doctor;
+        document.getElementById("year_diagnosis").value = entry.year_diagnosis;
+        document.getElementById("admission_age").value = entry.admission_age;
+        document.getElementById("birthdate").value = entry.birthdate;
+        document.getElementById("mother").value = entry.mother;
+        document.getElementById("father").value = entry.father;
+        document.getElementById("address").value = entry.address;
+    };
+
     const saveData = (entry) => {
         const data = JSON.parse(localStorage.getItem("formData")) || [];
-        data.push(entry);
+        if (editIndex !== null) {
+            data[editIndex] = entry;
+        } else {
+            data.push(entry);
+        }
         localStorage.setItem("formData", JSON.stringify(data));
         loadData();
+        editIndex = null; // Reset edit mode
     };
 
     const downloadData = () => {
@@ -152,10 +187,76 @@ document.addEventListener("DOMContentLoaded", () => {
         if (file) {
             uploadData(file);
         }
-        fileInput.value = "";
     });
 
-    
+
+    const showDetails = (index) => {
+        const data = JSON.parse(localStorage.getItem("formData")) || [];
+        const entry = data[index];
+
+        // Rellenar los detalles
+        document.getElementById("detailName").textContent = entry.name;
+        document.getElementById("detailAge").textContent = entry.age;
+        document.getElementById("detailDiagnosis").textContent = entry.diagnosis;
+        document.getElementById("detailSex").textContent = entry.sex;
+        document.getElementById("detailPhone").textContent = entry.phone;
+        document.getElementById("detailSupports").textContent = entry.supports;
+        document.getElementById("detailMedications").textContent = entry.medications;
+        document.getElementById("detailHospital").textContent = entry.hospital;
+        document.getElementById("detailHealth").textContent = entry.health;
+        document.getElementById("detailDoctor").textContent = entry.doctor;
+        document.getElementById("detailYearDiagnosis").textContent = entry.year_diagnosis;
+        document.getElementById("detailAdmissionAge").textContent = entry.admission_age;
+        document.getElementById("detailBirthdate").textContent = entry.birthdate;
+        document.getElementById("detailMother").textContent = entry.mother;
+        document.getElementById("detailFather").textContent = entry.father;
+        document.getElementById("detailAddress").textContent = entry.address;
+
+        // Mostrar la sección de detalles
+        detailsSection.style.display = "block";
+
+        // Resaltar la fila seleccionada
+        const rows = document.querySelectorAll("table tr");
+        rows.forEach(row => row.classList.remove("highlight"));
+        const selectedRow = rows[index + 1]; // Ajustamos para excluir el encabezado de la tabla
+        selectedRow.classList.add("highlight");
+    };
+
+    form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const entry = {
+            name: form.name.value,
+            age: form.age.value,
+            diagnosis: form.diagnosis.value,
+            sex: form.sex.value,
+            phone: form.phone.value,
+            supports: form.supports.value,
+            medications: form.medications.value,
+            hospital: form.hospital.value,
+            health: form.health.value,
+            doctor: form.doctor.value,
+            year_diagnosis: form.year_diagnosis.value,
+            admission_age: form.admission_age.value,
+            birthdate: form.birthdate.value,
+            mother: form.mother.value,
+            father: form.father.value,
+            address: form.address.value,
+        };
+
+        const data = JSON.parse(localStorage.getItem("formData")) || [];
+
+        if (editIndex !== null) {
+            data[editIndex] = entry;
+            editIndex = null;
+        } else {
+            data.push(entry);
+        }
+
+        localStorage.setItem("formData", JSON.stringify(data));
+        form.reset();
+        loadData();
+        detailsSection.style.display = "none";
+    });
 
     loadData();
     scheduleDownload();
