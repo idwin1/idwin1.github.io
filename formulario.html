@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="imagen.jpeg">
+    <title>abraza con amor</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: #0056b3;
+        }
+
+        form, .details-section {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .data-section{
+            max-width: 1800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            font-weight: 600;
+            margin-bottom: 5px;
+            display: block;
+            color: #333;
+        }
+
+        input, select, button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: background 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+
+        tbody tr:nth-child(odd) {
+            background-color: #f4f4f9;
+        }
+
+        tbody tr:hover {
+            background-color: #cce5ff;
+        }
+
+        .details-section {
+            display: none;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .details-section p {
+            font-size: 16px;
+            color: #333;
+            margin: 8px 0;
+        }
+
+        .details-section strong {
+            color: #0056b3;
+        }
+
+        #download, #upload {
+            display: block;
+            width: 200px;
+            margin: 10px auto;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body >
+    <h1>Formulario de Pacientes</h1>
+    <form id="dataForm">
+        <label for="name">Nombre:</label>
+        <input type="text" id="name" required>
+
+        <label for="age">Edad:</label>
+        <input type="number" id="age" min="0" required>
+
+        <label for="diagnosis">Diagnóstico:</label>
+        <input type="text" id="diagnosis" required>
+
+        <label for="sex">Sexo:</label>
+        <select id="sex" required>
+            <option value="Masculino">Masculino</option>
+            <option value="Femenino">Femenino</option>
+        </select>
+
+        <label for="supports">Apoyos:</label>
+        <input type="text" id="supports">
+
+        <label for="medications">Medicamentos:</label>
+        <input type="text" id="medications">
+
+        <label for="health">Estado de salud:</label>
+        <input type="text" id="health">
+
+        <label for="hospital">Hospital:</label>
+        <input type="text" id="hospital">
+
+        <label for="doctor">Médico:</label>
+        <input type="text" id="doctor">
+
+        <label for="year_diagnosis">Año de diagnóstico:</label>
+        <input type="number" id="year_diagnosis" min="1900">
+
+        <label for="admission_age">Edad de ingreso:</label>
+        <input type="number" id="admission_age" min="0">
+
+        <label for="birthdate">Fecha de nacimiento:</label>
+        <input type="date" id="birthdate" required>
+
+        <label for="mother">Nombre de madre:</label>
+        <input type="text" id="mother">
+
+        <label for="father">Nombre de padre:</label>
+        <input type="text" id="father">
+
+        <label for="address">Dirección:</label>
+        <input type="text" id="address">
+
+        <label for="phone">Teléfono:</label>
+        <input type="tel" id="phone">
+
+        <label for="time">Hora de descarga automática:</label>
+        <input type="time" id="time" required>
+
+        <button type="submit">Guardar</button>
+    </form>
+    
+
+    <div class="data-section">
+        <h2>Datos Guardados</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Edad</th>
+                    <th>Diagnóstico</th>
+                    <th>Sexo</th>
+                    <th>Teléfono</th>
+                    <th>Apoyos</th>
+                    <th>Medicamentos</th>
+                    <th>Hospital</th>
+                    <th>Estado de salud</th>
+                    <th>Medico</th>
+                    <th>año de ingreso</th>
+                    <th>Edad de admision</th>
+                    <th>Fecha de nacimiento</th>
+                    <th>Nombre de madre</th>
+                    <th>Nombre de padre</th>
+                    <th>Direccion</th>
+                    <th>Acción</th>
+                </tr>
+            </thead>
+            <tbody id="dataTable"></tbody>
+        </table>
+    </div>
+
+    <button id="download">Descargar Datos</button>
+
+    <button id="upload">Cargar Datos</button>
+    <input type="file" id="fileInput" style="display: none;">
+
+    <!-- Detalles del registro seleccionado -->
+    <div class="details-section" id="detailsSection">
+        <h2>Detalles del Registro Seleccionado</h2>
+        <p><strong>Nombre:</strong> <span id="detailName"></span></p>
+        <p><strong>Edad:</strong> <span id="detailAge"></span></p>
+        <p><strong>Diagnóstico:</strong> <span id="detailDiagnosis"></span></p>
+        <p><strong>Sexo:</strong> <span id="detailSex"></span></p>
+        <p><strong>Teléfono:</strong> <span id="detailPhone"></span></p>
+        <p><strong>Apoyos:</strong> <span id="detailSupports"></span></p>
+        <p><strong>Medicamentos:</strong> <span id="detailMedications"></span></p>
+        <p><strong>Hospital:</strong> <span id="detailHospital"></span></p>
+        <p><strong>Estado de salud:</strong> <span id="detailHealth"></span></p>
+        <p><strong>Médico:</strong> <span id="detailDoctor"></span></p>
+        <p><strong>Año de diagnóstico:</strong> <span id="detailYearDiagnosis"></span></p>
+        <p><strong>Edad de ingreso:</strong> <span id="detailAdmissionAge"></span></p>
+        <p><strong>Fecha de nacimiento:</strong> <span id="detailBirthdate"></span></p>
+        <p><strong>Nombre de madre:</strong> <span id="detailMother"></span></p>
+        <p><strong>Nombre de padre:</strong> <span id="detailFather"></span></p>
+        <p><strong>Dirección:</strong> <span id="detailAddress"></span></p>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
